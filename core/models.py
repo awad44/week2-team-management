@@ -17,6 +17,7 @@ class Membership(models.Model):
         ADMIN = "admin", "Admin"
         MEMBER = "member", "Member"
 
+    
     organization = models.ForeignKey(
         Organization,
         on_delete=models.CASCADE,
@@ -34,6 +35,7 @@ class Membership(models.Model):
     )
     joined_at = models.DateTimeField(auto_now_add=True)
 
+
     class Meta:
         constraints = [
             models.UniqueConstraint(
@@ -47,6 +49,11 @@ class Membership(models.Model):
 
 
 class Project(models.Model):
+    class Status(models.TextChoices):
+                PLANNING = "planning", "Planning"
+                ACTIVE = "active", "Active"
+                COMPLETED = "completed", "Completed"
+    
     organization = models.ForeignKey(
         Organization,
         on_delete=models.CASCADE,
@@ -54,11 +61,19 @@ class Project(models.Model):
     )
     name = models.CharField(max_length=150)
     description = models.TextField(blank=True)
+
+    status = models.CharField(
+    max_length=20,
+    choices=Status.choices,
+    default=Status.PLANNING,
+    )
+
     created_by = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.PROTECT,
         related_name="created_projects",
     )
+
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self) -> str:
